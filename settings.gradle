@@ -1,0 +1,4 @@
+rootProject.name = 'todo-list'
+include 'front-end'
+include 'process'
+
