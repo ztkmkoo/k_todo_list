@@ -1,7 +1,64 @@
 <html>
 <head>
+    <meta charset="UTF-8">
+    <style>
+        table {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #cccccc;
+        }
+    </style>
     <h1>
-        HI
+        To Do List
     </h1>
+    <!--<link rel="stylesheet" type="text/css" href="/css/table.css">-->
 </head>
+<body>
+<table>
+    <thead>
+    <th>id</th>
+    <th>할일</th>
+    <th>참조 할일 id</th>
+    <th>작성일시</th>
+    <th>최종수정일시</th>
+    <th>완료처리</th>
+    </thead>
+    <tbody>
+    <tr>
+        <td>1</td>
+        <td>집안일</td>
+        <td></td>
+        <td>2018-04-01 10:00:00</td>
+        <td>2018-04-01 10:00:00</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>청소</td>
+        <td>@1</td>
+        <td>2018-04-01 10:00:00</td>
+        <td>2018-04-01 10:00:00</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>빨래</td>
+        <td>@1</td>
+        <td>2018-04-01 10:00:00</td>
+        <td>2018-04-01 10:00:00</td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
+</body>
 </html>
