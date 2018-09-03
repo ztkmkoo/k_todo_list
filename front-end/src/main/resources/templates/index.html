@@ -1,4 +1,4 @@
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <style>
@@ -24,41 +24,30 @@
     <!--<link rel="stylesheet" type="text/css" href="/css/table.css">-->
 </head>
 <body>
-<table>
-    <thead>
-    <th>id</th>
-    <th>할일</th>
-    <th>참조 할일 id</th>
-    <th>작성일시</th>
-    <th>최종수정일시</th>
-    <th>완료처리</th>
-    </thead>
-    <tbody>
-    <tr>
-        <td>1</td>
-        <td>집안일</td>
-        <td></td>
-        <td>2018-04-01 10:00:00</td>
-        <td>2018-04-01 10:00:00</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>2</td>
-        <td>청소</td>
-        <td>@1</td>
-        <td>2018-04-01 10:00:00</td>
-        <td>2018-04-01 10:00:00</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>3</td>
-        <td>빨래</td>
-        <td>@1</td>
-        <td>2018-04-01 10:00:00</td>
-        <td>2018-04-01 10:00:00</td>
-        <td></td>
-    </tr>
-    </tbody>
-</table>
+<div>
+    <table>
+        <thead>
+        <th>id</th>
+        <th>할일</th>
+        <th>참조 할일 id</th>
+        <th>작성일시</th>
+        <th>최종수정일시</th>
+        <th>완료처리</th>
+        </thead>
+        <tbody>
+        <tr th:each="toDo : ${toDoList}">
+            <td th:text="${toDo.id}"></td>
+            <td th:text="${toDo.toDo}"></td>
+            <td th:text="${toDo.refList}"></td>
+            <td th:text="${toDo.registerDate}"></td>
+            <td th:text="${toDo.modifyDate}"></td>
+            <td th:text="${toDo.isDone} > 0 ? Y : N"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+
+</script>
 </body>
 </html>
