@@ -3,6 +3,7 @@ package com.ztkmkoo.todolist.frontend.handler;
 import com.ztkmkoo.todolist.frontend.model.ToDo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -10,10 +11,7 @@ import reactor.core.publisher.Mono;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 public class TestHandler {
@@ -28,5 +26,20 @@ public class TestHandler {
         toDoList.add(new ToDo(3, "빨래", new ArrayList<>(Arrays.asList(1, 2)), now, now, 0));
 
         return ServerResponse.ok().contentType(MediaType.TEXT_HTML). render("index", toDoList);
+    }
+
+    public Mono<ServerResponse> test2(ServerRequest request) {
+        log.info("test2: {}", request.toString());
+
+        Mono<String> data= request.bodyToMono(String.class);
+
+        Runnable runnable = () -> {
+            String bd = data.block();
+            System.out.println(bd);
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
+
+        return ServerResponse.ok().contentType(MediaType.TEXT_PLAIN).body(Mono.just("Done"), String.class);
     }
 }

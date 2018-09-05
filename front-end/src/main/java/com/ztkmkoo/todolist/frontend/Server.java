@@ -42,11 +42,7 @@ public class Server {
     public RouterFunction<ServerResponse> routerFunction() {
         TestHandler testHandler = new TestHandler();
 
-        return RouterFunctions.nest(
-                RequestPredicates.path("/"),
-                RouterFunctions.nest(
-                        RequestPredicates.accept(MediaType.APPLICATION_JSON),
-                        RouterFunctions.route(RequestPredicates.method(HttpMethod.GET), testHandler::test))
-                );
+        return RouterFunctions.route(RequestPredicates.GET("/").and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), testHandler::test)
+                .andRoute(RequestPredicates.POST("/test").and(RequestPredicates.accept(MediaType.APPLICATION_JSON)), testHandler::test2);
     }
 }
