@@ -1,5 +1,5 @@
 group 'com.ztkmkoo'
-version '1.1'
+version '2.0-SNAPSHOT'
 
 apply plugin: 'java'
 
