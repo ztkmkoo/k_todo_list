@@ -1,9 +1,22 @@
 group 'com.ztkmkoo'
-version '3.1'
+version '3.2'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
+    }
+}
 
 apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 sourceCompatibility = 1.8
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 repositories {
     mavenCentral()
@@ -36,7 +49,7 @@ jar {
     manifest {
         attributes 'Implementation-Title': project.name
         attributes 'Implementation-Version': version
-        attributes 'Main-Class': 'com.ztkmkoo.todolist.frontend.FrontEndApplication'
+        attributes 'Main-Class': 'com.ztkmkoo.todolist.process.ProcessApplication'
     }
 
     from {
@@ -44,12 +57,22 @@ jar {
     }
 }
 
+shadowJar {
+    manifest {
+        attributes 'Implementation-Title': project.name
+        attributes 'Implementation-Version': version
+        attributes 'Main-Class': 'com.ztkmkoo.todolist.process.ProcessApplication'
+    }
+
+    append 'reference.conf'
+}
+
 task createExecutingScript {
     group 'build'
     description 'create runnable script'
 
     doLast {
-        def jarName = "$project.name-$version" + '.jar'
+        def jarName = "$project.name-$version" + '-all.jar'
         def javaOptions = "-server"
         def filePath = "$projectDir/build/libs/$project.name" + ".sh"
 
@@ -63,5 +86,9 @@ task createExecutingScript {
 }
 
 assemble.doLast {
+    createExecutingScript.execute()
+}
+
+shadowJar.doLast {
     createExecutingScript.execute()
 }
