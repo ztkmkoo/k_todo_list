@@ -1,28 +1,13 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <style>
-        table {
-            font-family: Arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        td, th {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #cccccc;
-        }
-    </style>
-    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+    <link href="../css/table.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="/js/toDo.js"></script>
+    <title>ToDoList</title>
     <h1>
         To Do List
     </h1>
-    <!--<link rel="stylesheet" type="text/css" href="/css/table.css">-->
 </head>
 <body>
 <div>
@@ -54,28 +39,5 @@
         </tbody>
     </table>
 </div>
-<script type="text/javascript">
-function test(text) {
-    alert(text);
-}
-function insertNewToDo(todo, todoRef) {
-    var request = new Object();
-    request["todo"] = todo;
-    request["todoRef"] = todoRef;
-
-    var json = JSON.stringify(request);
-
-    $.get({
-        url: "/test",
-        type: 'POST',
-        data: json,
-        dataType: 'json'
-    }).done(function (res) {
-        alert("done: " + res);
-    }).fail(function (xhr, status, errorThrown) {
-        alert("fail" + xhr + ", " + status + ", " + errorThrown);
-    })
-}
-</script>
 </body>
 </html>

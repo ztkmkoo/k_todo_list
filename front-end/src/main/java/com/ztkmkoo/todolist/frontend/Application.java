@@ -1,6 +1,5 @@
 package com.ztkmkoo.todolist.frontend;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -13,12 +12,11 @@ public class Application {
         SpringApplication.run(Application.class);
     }
 
-    @Autowired
-    private Server server;
-
-    @PostConstruct
-    public void init() {
-        server.startReactorServer();
-    }
-
+//    @PostConstruct
+//    public void testAkka() {
+//        final ActorSystem actorSystem = ActorSystem.create();
+//
+//        ActorSelection actorSelection = actorSystem.actorSelection("akka.tcp://ActorSystem@127.0.0.1:12553/user/test");
+//        actorSelection.tell("Hi", ActorRef.noSender());
+//    }
 }

@@ -1,5 +1,5 @@
 group 'com.ztkmkoo'
-version '1.0-SNAPSHOT'
+version '1.1'
 
 apply plugin: 'java'
 
@@ -10,5 +10,7 @@ repositories {
 }
 
 dependencies {
+    compile project(':common')
+
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

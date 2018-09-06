@@ -1,5 +1,5 @@
 group 'com.ztkmkoo'
-version '1.5'
+version '2.0'
 
 apply plugin: 'java'
 
@@ -10,9 +10,14 @@ repositories {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-webflux
     compile('org.springframework.boot:spring-boot-starter-webflux:2.0.4.RELEASE')
     compile('org.springframework.boot:spring-boot-starter-thymeleaf:2.0.4.RELEASE')
+
+//    compile('com.fasterxml.jackson.core:jackson-databind:2.9.6')
+//    compile('com.typesafe.akka:akka-actor_2.12:2.5.16')
+//    compile('com.typesafe.akka:akka-remote_2.12:2.5.16')
+
+    compile project(':common')
 
     compileOnly('org.projectlombok:lombok:1.16.16')
 
