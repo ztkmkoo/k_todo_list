@@ -1,7 +1,18 @@
 group 'com.ztkmkoo'
-version '3.1'
+version '3.2'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.4.RELEASE")
+    }
+}
 
 apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 
 sourceCompatibility = 1.8
 
@@ -18,4 +29,52 @@ dependencies {
     compileOnly('org.projectlombok:lombok:1.16.16')
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir 'lib'
+        }
+        resources {
+            srcDir 'src/resources'
+        }
+    }
+}
+
+jar {
+
+    // MANIFEST.MF 파일에 들어갈 내용 추가
+    manifest {
+        attributes 'Implementation-Title': project.name
+        attributes 'Implementation-Version': version
+        attributes 'Main-Class': 'com.ztkmkoo.todolist.frontend.FrontEndApplication'
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+task createExecutingScript {
+    group 'build'
+    description 'create runnable script'
+
+    doLast {
+        def jarName = "$project.name-$version" + '.jar'
+        def javaOptions = "-server"
+        def filePath = "$projectDir/build/libs/$project.name" + ".sh"
+
+        File file = new File(filePath)
+        file.text = "exec -a $project.name java $javaOptions -jar $jarName > 2&>1 &"
+
+        def batchPath = "$projectDir/build/libs/$project.name" + ".bat"
+        File batchFile = new File(batchPath)
+        batchFile.text = "java $javaOptions -jar $jarName"
+    }
+}
+
+assemble.doLast {
+    createExecutingScript.execute()
 }
