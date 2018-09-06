@@ -34,22 +34,20 @@ public class ToDoService {
     @Value("${process}")
     private String process;
 
-    private final Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-    private final List<ToDo> toDoList = new ArrayList<>(Arrays.asList(
-            new ToDo(3, "빨래", new ArrayList<>(Arrays.asList(1, 2)), now, now, 0),
-            new ToDo(2, "청소", new ArrayList<>(Arrays.asList(1)), now, now, 0),
-            new ToDo(1, "집안일", Collections.emptyList(), now, now, 1)
-    ));
-
     public Mono<Message.SelectToDoAns> getToDoListByPage(final int page) {
         log.info("getToDoListByPage: {}", page);
         final ActorSelection actorSelection = actorSystem.actorSelection(process);
         final Message.SelectToDoReq req = new Message.SelectToDoReq(page, 5);
 
         return Mono.fromCallable(() -> {
-            final CompletableFuture<Object> future = PatternsCS.ask(actorSelection, req, Duration.ofSeconds(3)).toCompletableFuture();
-            final Message.SelectToDoAns ans = Message.SelectToDoAns.class.cast(future.get());
-            return ans;
+            try {
+                final CompletableFuture<Object> future = PatternsCS.ask(actorSelection, req, Duration.ofSeconds(3)).toCompletableFuture();
+                final Message.SelectToDoAns ans = Message.SelectToDoAns.class.cast(future.get());
+                return ans;
+            } catch (Exception e) {
+                log.error(e.getLocalizedMessage());
+                return new Message.SelectToDoAns(page, 5, Collections.EMPTY_LIST, 1);
+            }
         });
     }
 
