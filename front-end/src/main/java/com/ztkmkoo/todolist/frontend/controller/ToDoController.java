@@ -1,9 +1,12 @@
 package com.ztkmkoo.todolist.frontend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ztkmkoo.todolist.frontend.model.ToDo;
+import com.ztkmkoo.todolist.common.message.Message;
+import com.ztkmkoo.todolist.common.model.ToDo;
 import com.ztkmkoo.todolist.frontend.model.ToDoAns;
 import com.ztkmkoo.todolist.frontend.model.ToDoReq;
+import com.ztkmkoo.todolist.frontend.model.ToDoUpdateAns;
+import com.ztkmkoo.todolist.frontend.model.ToDoUpdateReq;
 import com.ztkmkoo.todolist.frontend.service.ToDoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +16,6 @@ import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -24,27 +23,25 @@ import java.util.List;
 @RequestMapping("/")
 public class ToDoController {
 
-    private final LocalDateTime now = LocalDateTime.now();
-    private final List<ToDo> toDoList = new ArrayList<>(Arrays.asList(
-            new ToDo(1, "집안일", Collections.emptyList(), now, now, 1),
-            new ToDo(2, "청소", new ArrayList<>(Arrays.asList(1)), now, now, 0),
-            new ToDo(3, "빨래", new ArrayList<>(Arrays.asList(1, 2)), now, now, 0)
-    ));
-
     @Autowired
     private ToDoService toDoService;
 
-    @GetMapping(path = "/")
-    public Rendering index() {
+    @GetMapping(path = "/todo/{page}")
+    public Rendering index(@PathVariable int page) {
+
+        final Mono<Message.SelectToDoAns> selectToDoAns = toDoService.getToDoListByPage(page);
+
         return Rendering
                 .view("index.html")
-                .modelAttribute("toDoList", toDoList)
+                .modelAttribute("selectToDoAns", selectToDoAns)
+                .modelAttribute("currentPage", page)
                 .build();
     }
 
     @ResponseBody
     @PostMapping(path = "/insertNewToDo")
     public Mono<ToDoAns> insertNewToDo(@RequestBody final String reqBody) {
+        log.info("/insertNewToDo : {}", reqBody);
         try {
             ObjectMapper mapper = new ObjectMapper();
             ToDoReq toDoReq = mapper.readValue(reqBody, ToDoReq.class);
@@ -52,6 +49,34 @@ public class ToDoController {
         } catch (IOException e) {
             log.error(e.getLocalizedMessage());
             return Mono.just(new ToDoAns(500));
+        }
+    }
+
+    @ResponseBody
+    @PutMapping(path = "/finishToDo/{id}")
+    public Mono<Message.FinishToDoAns> finishToDo(@PathVariable final int id) {
+        log.info("/finishToDo : {}", id);
+        try {
+            return toDoService.finishToDo(id);
+        } catch (Exception e) {
+            String error = e.getLocalizedMessage();
+            log.error(error);
+            return Mono.just(new Message.FinishToDoAns(id,0, error));
+        }
+    }
+
+    @ResponseBody
+    @PutMapping(path = "/updateToDo/")
+    public Mono<ToDoUpdateAns> updateToDo(@RequestBody final String reqBody) {
+        log.info("/finishToDo : {}", reqBody);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ToDoUpdateReq req = mapper.readValue(reqBody, ToDoUpdateReq.class);
+            return toDoService.updateToDo(req);
+        } catch (Exception e) {
+            String error = e.getLocalizedMessage();
+            log.error(error);
+            return Mono.just(new ToDoUpdateAns(0, error));
         }
     }
 }

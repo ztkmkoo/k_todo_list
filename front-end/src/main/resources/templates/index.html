@@ -2,6 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <link href="../css/table.css" rel="stylesheet">
+    <link href="../css/form.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="/js/toDo.js"></script>
     <title>ToDoList</title>
@@ -9,16 +10,41 @@
         To Do List
     </h1>
 </head>
-<body>
-<div>
+<body onload="bodyOnLoad()">
+<div class="formDiv">
     <form action="javascript:insertNewToDo(todo.value, todoRef.value)">
-        <input type="text" id="todo" name="todo" placeholder="할일을 적어주세요.">
-        <input type="text" id="todoRef" name="todoRef" placeholder="참조 할일">
-        <input type="submit" value="할일 추가">
+        <input type="text" id="todo" name="todo" placeholder="할 일을 적어주세요." class="formInputText">
+        <input type="text" id="todoRef" name="todoRef" placeholder="참조 할 일. 여러 할 일 참조시 ,로 구분해주세요." class="formInputText">
+        <input type="submit" value="할 일 추가" class="formInputSummit">
+    </form>
+    <form action="javascript:updateToDo(updateToDoId.value, updateToDoToDo.value)">
+        <input type="text" id="updateToDoId" name="updateToDoId" placeholder="할 일 ID" class="formInputText">
+        <input type="text" id="updateToDoToDo" name="updateToDoToDo" placeholder="수정 할 할 일을 적어주세요" class="formInputText">
+        <input type="submit" value="할 일 업데이트" class="formInputSummit">
+    </form>
+    <form action="javascript:finishToDo(finishTodo.value)">
+        <input type="text" id="finishTodo" name="finishTodo" placeholder="완료 할 일 ID" class="formInputText">
+        <input type="submit" value="완료 처리" class="formInputSummit">
     </form>
 </div>
 <div>
-    <table>
+    <p id = "currentPageP" th:text="${currentPage}" hidden = "true"></p>
+    <p id = "totalPageP" th:text="${selectToDoAns.totalPage}" hidden = "true"></p>
+    <form action="javascript:pageButtonClick(1)">
+        <input type="submit" value="첫 페이지" class="formPageSummit">
+    </form>
+    <form action="javascript:prevPageButtonClick()">
+        <input type="submit" value="이전 페이지" class="formPageSummit">
+    </form>
+    <form action="javascript:nextPageButtonClick()">
+        <input type="submit" value="다음 페이지" class="formPageSummit">
+    </form>
+    <form action="javascript:lastPageButtonClick()">
+        <input type="submit" value="마지막 페이지" class="formPageSummit">
+    </form>
+</div>
+<div class="formDiv">
+    <table id="toDoTable">
         <thead>
         <th>id</th>
         <th>할일</th>
@@ -28,7 +54,7 @@
         <th>완료처리</th>
         </thead>
         <tbody>
-        <tr th:each="toDo : ${toDoList}">
+        <tr th:each="toDo : ${selectToDoAns.toDoList}">
             <td th:text="${toDo.id}"></td>
             <td th:text="${toDo.toDo}"></td>
             <td th:text="${toDo.refList}"></td>

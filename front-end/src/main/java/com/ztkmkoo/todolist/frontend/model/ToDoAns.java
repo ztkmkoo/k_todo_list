@@ -1,5 +1,6 @@
 package com.ztkmkoo.todolist.frontend.model;
 
+import com.ztkmkoo.todolist.common.model.ToDo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
