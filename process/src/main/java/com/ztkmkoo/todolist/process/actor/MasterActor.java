@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 public class MasterActor extends AbstractActor {
@@ -134,7 +135,8 @@ public class MasterActor extends AbstractActor {
                     log.info("Receive Message. SelectToDoReq {} page ({} c/p).", msg.getPage(), msg.getCountPerPage());
 
                     List<ToDo> list = selectToDo(msg);
-                    sender().tell(new Message.SelectToDoAns(msg.getPage(), msg.getCountPerPage(), list), self());
+                    int totalPage = (totalCount / msg.getCountPerPage()) + 1;
+                    sender().tell(new Message.SelectToDoAns(msg.getPage(), msg.getCountPerPage(), list, totalPage), self());
                 })
                 .match(Message.FinishToDoReq.class, msg -> {
                     log.info("Receive Message. FinishToDoReq: {}", msg.getId());
@@ -193,7 +195,7 @@ public class MasterActor extends AbstractActor {
         final int id = ++idGenerator;
         final String toDo = req.getToDo();
         final String refList = listToJsonString(req.getRefList());
-        final Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+        final Timestamp now = Timestamp.valueOf(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
 
         try {
             cache.query(insertToDoQuery.setArgs(
@@ -260,7 +262,7 @@ public class MasterActor extends AbstractActor {
 
         final IgniteCache cache = getCache();
         if (!canFinish(cache, id)) {
-            return new Message.FinishToDoAns(id, false, "참조 된 일이 남아 있어서 완료 할 수 없습니다.");
+            return new Message.FinishToDoAns(id, 0, "참조 된 일이 남아 있어서 완료 할 수 없습니다.");
         } else {
             int updateCount = 0;
             try {
@@ -272,10 +274,10 @@ public class MasterActor extends AbstractActor {
                 if (updateCount > 0) {
                     updateToDoIsDone(cache, id, false);
                 }
-                return new Message.FinishToDoAns(id, false, "업데이트에서 문제가 발생했습니다.");
+                return new Message.FinishToDoAns(id, 0, "업데이트에서 문제가 발생했습니다.");
             }
 
-            return new Message.FinishToDoAns(id, true, "");
+            return new Message.FinishToDoAns(id, 1, "");
         }
     }
 
@@ -284,7 +286,7 @@ public class MasterActor extends AbstractActor {
 
         final IgniteCache cache = getCache();
         try {
-            cache.query(updateToDoToDoQuery.setArgs(req.getToDo(), Timestamp.valueOf(LocalDateTime.now()), req.getId()));
+            cache.query(updateToDoToDoQuery.setArgs(req.getToDo(), Timestamp.valueOf(LocalDateTime.now(ZoneId.of("Asia/Seoul"))), req.getId()));
             log.info("updateToDoToDoQuery: {}", updateToDoToDoQuery.getSql());
             return new Message.UpdateToDoAns(req.getId(), true, "");
         } catch (Exception e) {
@@ -295,12 +297,12 @@ public class MasterActor extends AbstractActor {
 
     private boolean canFinish(final IgniteCache cache, final int id) {
         final FieldsQueryCursor<List<?>> cursor = cache.query(selectRefByIdQuery.setArgs(id));
+        log.info("selectRefByIdQuery: {}", selectRefByIdQuery.getSql());
         final Iterator<List<?>> iterator = cursor.iterator();
-        boolean result = false;
+        boolean result = true;
         while (iterator.hasNext())  {
             final List<?> row = iterator.next();
             final boolean isDone = Boolean.class.cast(row.get(2));
-            result = true;
             if (isDone)
                 continue;
 
@@ -309,11 +311,12 @@ public class MasterActor extends AbstractActor {
             return false;
         }
 
+        log.info("canFinish  Result: {}", result);
         return result;
     }
 
     private int updateToDoIsDone(final IgniteCache cache, final int id, final boolean isDone) {
-        cache.query(updateToDoIsDoneQuery.setArgs(isDone, Timestamp.valueOf(LocalDateTime.now()), id));
+        cache.query(updateToDoIsDoneQuery.setArgs(isDone, Timestamp.valueOf(LocalDateTime.now(ZoneId.of("Asia/Seoul"))), id));
         log.info("updateToDoIsDoneQuery: {}", updateToDoIsDoneQuery.getSql());
         return 1;
     }

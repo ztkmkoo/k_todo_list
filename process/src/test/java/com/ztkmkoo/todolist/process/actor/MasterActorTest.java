@@ -97,7 +97,7 @@ public class MasterActorTest {
             final CompletableFuture future = PatternsCS.ask(actorRef, req, Duration.ofSeconds(3)).toCompletableFuture();
             final Message.FinishToDoAns ans  = Message.FinishToDoAns.class.cast(future.get());
 
-            assert ans.isDone() : "Error in finish job: cause, " + ans.getErrorLog();
+            assert (ans.getIsDone() == 1) : "Error in finish job: cause, " + ans.getErrorLog();
         }};
     }
 
