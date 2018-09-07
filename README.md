@@ -61,3 +61,4 @@ Default port is 8187 and  the host is the local host. If you want to change it, 
 
 ## Server Structer
 
+![](https://github.com/ztkmkoo/k_todo_list/blob/master/src/main/resources/structure.png)
